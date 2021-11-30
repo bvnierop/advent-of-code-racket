@@ -1,0 +1,26 @@
+#+title: Advent of Code in Racket
+#+author Bart van Nierop
+
+This is Advent of Code, coded in (mostly typed, hopefully) Racket. Initially for
+the year 2021, but set up so that more can be done.
+
+* Commands
+
+Some commands are added to ~raco~. These are:
+
+~raco prep [ <option> ... ] [<year>] [<day>]~
+Prepare a day. Puts a solution template in the file ~year/day.rkt~ and the day's
+input in ~year/day.rktd~. Depends on the existence of a file called ~.session~
+that contains the session key.
+
+#+begin_src
+usage: raco day [ <option> ... ] [<year>] [<day>]
+
+<option> is one of
+
+  -i <infile>, --input <infile>
+     Input file name
+#+end_src
+Run the solution for a day. ~--input~ allows to specify a different input file
+than the default one. ~--input~ does not take an extension nor a folder. It
+represents a file in the format ~year/<infile>.rktd~.
