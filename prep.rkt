@@ -21,7 +21,7 @@
 #lang racket
 ;;#lang typed/racket
 
-(require advent-of-code/aoc-lib)
+(require "../aoc-lib.rkt")
 
 ;;(: solve-a (-> String Integer))
 (define (solve-a infile)

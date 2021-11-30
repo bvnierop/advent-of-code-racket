@@ -1,6 +1,6 @@
 #lang typed/racket
 
-(require advent-of-code/aoc-lib)
+(require "../aoc-lib.rkt")
 
 (: input->offsets (-> String (Listof Integer)))
 (define (input->offsets input)
