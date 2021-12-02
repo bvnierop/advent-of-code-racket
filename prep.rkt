@@ -21,14 +21,14 @@
 #lang racket
 ;;#lang typed/racket
 
-(require "../aoc-lib.rkt")
+(require advent-of-code/aoc-lib)
 
-;;(: solve-a (-> String Integer))
-(define (solve-a infile)
+;;(: solve-a (-> (Listof String) Integer))
+(define (solve-a lines)
   0)
 
-;;(: solve-b (-> String Integer))
-(define (solve-b infile)
+;;(: solve-b (-> (Listof String) Integer))
+(define (solve-b lines)
   1)
 
 (provide solve-a)

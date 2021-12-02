@@ -7,6 +7,8 @@
 (require raco/command-name)
 (require racket/format)
 
+(require advent-of-code/aoc-lib)
+
 (define (day->string day)
   (~a day #:width 2 #:align 'right #:pad-string "0"))
 
@@ -24,8 +26,9 @@
   (define solve-a (dynamic-require (year-day->filename year day) 'solve-a))
   (define solve-b (dynamic-require (year-day->filename year day) 'solve-b))
   (define input-filename (generate-input-filename year day (input-file)))
-  (time (display (solve-a input-filename)) (display "\n"))
-  (time (display (solve-b input-filename)) (display "\n"))
+  (define input-lines (file->lines input-filename))
+  (time (display (solve-a input-lines)) (display "\n"))
+  (time (display (solve-b input-lines)) (display "\n"))
   (void))
 
 (define default-year (date-year (current-date)))

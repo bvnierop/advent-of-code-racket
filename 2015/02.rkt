@@ -1,6 +1,6 @@
 #lang typed/racket
 
-(require "../aoc-lib.rkt")
+(require advent-of-code/aoc-lib)
 
 (: parse-line (-> String (Listof Integer)))
 (define (parse-line line)
@@ -21,21 +21,20 @@
     ((list a b c) (+ (* a b c)
                      (+ a a b b)))))
 
-(: solve (-> String (-> (Listof Integer) Integer) Integer))
-(define (solve infile fn)
-  (define lines (file->lines infile))
+(: solve (-> (Listof String) (-> (Listof Integer) Integer) Integer))
+(define (solve lines fn)
   (define sizes (map parse-line lines))
   (define req (map fn sizes))
 
   (foldl + 0 req))
   
-(: solve-a (-> String Integer))
-(define (solve-a infile)
-  (solve infile required-wrapping-paper))
+(: solve-a (-> (Listof String) Integer))
+(define (solve-a lines)
+  (solve lines required-wrapping-paper))
 
-(: solve-b (-> String Integer))
-(define (solve-b infile)
-  (solve infile required-ribbon))
+(: solve-b (-> (Listof String) Integer))
+(define (solve-b lines)
+  (solve lines required-ribbon))
 
 (provide solve-a)
 (provide solve-b)

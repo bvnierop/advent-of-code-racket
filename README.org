@@ -4,13 +4,16 @@
 This is Advent of Code, coded in (mostly typed, hopefully) Racket. Initially for
 the year 2021, but set up so that more can be done.
 
-* Commands
+* Notes
+No prior Racket experience, so don't take this as an example of how to write
+production quality Racket code.
 
+* Commands
 Some commands are added to ~raco~. These are:
 
 
 #+begin_src
-raco prep [ <option> ... ] [<year>] [<day>]
+raco prep [<year>] [<day>]
 #+end_src
 Prepare a day. Puts a solution template in the file ~year/day.rkt~ and the day's
 input in ~year/day.rktd~. Depends on the existence of a file called ~.session~
@@ -25,5 +28,5 @@ usage: raco day [ <option> ... ] [<year>] [<day>]
      Input file name
 #+end_src
 Run the solution for a day. ~--input~ allows to specify a different input file
-than the default one. ~--input~ does not take an extension nor a folder. It
-represents a file in the format ~year/<infile>.rktd~.
+than the default one. ~--input~ does not take an extension. It represents a file
+in the format ~<infile>.rktd~.
