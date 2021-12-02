@@ -19,8 +19,8 @@
 
 (define (generate-input-filename year day input-file)
   (if input-file
-      (format "~a.rktd" input-file)
-      (format "~a/~a.rktd" year (day->string day))))
+      (format "~a/input/~a.rktd" year input-file)
+      (format "~a/input/~a.rktd" year (day->string day))))
 
 (define (run-day year day)
   (define solve-a (dynamic-require (year-day->filename year day) 'solve-a))

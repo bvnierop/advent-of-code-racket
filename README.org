@@ -28,5 +28,5 @@ usage: raco day [ <option> ... ] [<year>] [<day>]
      Input file name
 #+end_src
 Run the solution for a day. ~--input~ allows to specify a different input file
-than the default one. ~--input~ does not take an extension. It represents a file
-in the format ~<infile>.rktd~.
+than the default one. ~--input~ does not take an extension or path. It
+represents a file in the format ~<year>/input/<infile>.rktd~.

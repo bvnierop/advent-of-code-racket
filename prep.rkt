@@ -12,7 +12,7 @@
   (~a day #:width 2 #:align 'right #:pad-string "0"))
 
 (define (generate-input-filename year day)
-  (format "~a/~a.rktd" year (day->string day)))
+  (format "~a/input/~a.rktd" year (day->string day)))
 
 (define (generate-source-filename year day)
   (format "~a/~a.rkt" year (day->string day)))
@@ -48,7 +48,9 @@ EOF
   (define data (get (format "https://adventofcode.com/~a/day/~a/input" year day)
                     #:headers headers))
 
-  (mkdir (number->string year)) ; Ensure directory
+  ; Ensure directories
+  (mkdir (number->string year))
+  (mkdir (format "~a/input" (number->string year)))
 
   ;; Write input file
   (printf "Write input file...\n")
@@ -59,7 +61,7 @@ EOF
   (display (response-body data) outfile)
 
   ;; Potentially write source file
-  (with-handlers ((exn:fail:filesystem? 'ignore))
+  (with-handlers ((exn:fail:filesystem? (λ (exn) (void))))
     (define sourcefile (open-output-file (generate-source-filename year day)
                                          #:exists 'error))
     (printf "Write solution template...\n")
