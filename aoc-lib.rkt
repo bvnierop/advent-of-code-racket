@@ -53,3 +53,9 @@
 (provide take-up-to)
 (provide drop-up-to)
 (provide chunk-every)
+
+;;
+(define-syntax-rule (read! type port)
+  (cast (read port) type))
+
+(provide read!)
