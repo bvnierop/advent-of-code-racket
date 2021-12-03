@@ -4,7 +4,8 @@
 (define version "1.0")
 
 (define deps '(["base" #:version "8.3"]
-               "http-easy"))
+               "http-easy"
+               "threading-lib"))
 
 (define build-deps '())
 

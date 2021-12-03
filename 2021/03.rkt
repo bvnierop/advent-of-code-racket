@@ -1,12 +1,15 @@
 #lang typed/racket
 
 (require advent-of-code/aoc-lib)
+(require threading)
 
 (: select-bit-value (-> (Listof Integer) Integer (-> Integer Integer Boolean) Integer))
-(define (select-bit-value numbers bit compare) 
-  (car (first (sort-frequencies
-               (frequencies (map (λ ((num : Integer)) (bit-at num bit)) numbers))
-               compare compare))))
+(define (select-bit-value numbers bit compare)
+  (~> (map (λ ((num : Integer)) (bit-at num bit)) numbers)
+      (frequencies)
+      (sort-frequencies compare compare)
+      (first)
+      (car)))
 
 (: build-simple-meter (-> (Listof Integer) Integer (-> Integer Integer Boolean) Integer))
 (define (build-simple-meter numbers bits compare)
