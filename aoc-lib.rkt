@@ -6,10 +6,10 @@
   "Predicate that tests that a list contains only strings"
   (andmap string? l))
 
-(: string->int! (-> String Integer))
-(define (string->int! str)
+(: string->int! (-> String Integer Integer))
+(define (string->int! str (base 10))
   "Forces conversion from a string to an integer."
-  (match (string->number str)
+  (match (string->number str base)
     (#f (raise (format "String '~a' is not a number!" str)))
     (n (cast n Integer))))
 
@@ -77,20 +77,25 @@
 (provide bit-at)
 
 ;; Count frequencies of elements in a list
-;; (: frequencies (All (A) (-> (Listof A) (Listof (Pairof A Integer)))))
+(: frequencies (All (A) (-> (Listof A) (Listof (Pairof A Integer)))))
+(define (frequencies lst)
+  (map
+   (λ ((grp : (Listof A))) (cons (first grp) (length grp)))
+   (group-by (λ (x) x) lst)))
 
-;; (define (frequencies lst)
-;;   (map
-;;    (λ (grp) (cons (first grp) (length grp)))
-;;    (group-by identity lst)))
-;;   ;; (hash->list
-;;   ;;  (foldl
-;;   ;;  (lambda (elem freqs) (hash-update freqs elem
-;;   ;;                                    (lambda (val) (+ val 1))
-;;   ;;                                    (lambda () 0)))
-;;   ;;  (hash)
-;;   ;;  lst)))
+(: sort-frequencies
+   (All (A)
+        (-> (Listof (Pairof A Integer))
+            (-> Integer Integer Boolean)
+            (-> A A Boolean)
+            (Listof (Pairof A Integer)))))
+(define (sort-frequencies frequencies less-than? key-less-than?)
+  (define key-sort (inst sort (Pairof A Integer) A))
+  (define frequency-sort (inst sort (Pairof A Integer) Integer))
+  (frequency-sort 
+   (key-sort frequencies key-less-than? #:key car)
+   less-than?
+   #:key cdr))
 
-;; ;; Sort the frequencies, tiebreak on the element itself
-;; (define (sort-frequencies frequencies less-than? (key-less-than? less-than?))
-;;   (sort (sort frequencies key-less-than? #:key car) less-than? #:key cdr))
+(provide frequencies)
+(provide sort-frequencies)

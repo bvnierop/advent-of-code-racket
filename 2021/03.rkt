@@ -1,42 +1,39 @@
-#lang racket
-;;#lang typed/racket
-
-(define (frequencies lst)
-  (map
-   (λ (grp) (cons (first grp) (length grp)))
-   (group-by identity lst)))
-
-;; Sort the frequencies, tiebreak on the element itself
-(define (sort-frequencies frequencies less-than? (key-less-than? less-than?))
-  (sort (sort frequencies key-less-than? #:key car) less-than? #:key cdr))
+#lang typed/racket
 
 (require advent-of-code/aoc-lib)
 
+(: select-bit-value (-> (Listof Integer) Integer (-> Integer Integer Boolean) Integer))
 (define (select-bit-value numbers bit compare) 
-  (car (first (sort-frequencies (frequencies (map (curryr bit-at bit) numbers)) compare))))
+  (car (first (sort-frequencies
+               (frequencies (map (λ ((num : Integer)) (bit-at num bit)) numbers))
+               compare compare))))
 
+(: build-simple-meter (-> (Listof Integer) Integer (-> Integer Integer Boolean) Integer))
 (define (build-simple-meter numbers bits compare)
   (for/fold ([number 0])
             ([i (in-range 0 bits)])
     (bw:or number (bw:<< (select-bit-value numbers i compare) i))))
 
+(: build-complex-meter (-> (Listof Integer) Integer (-> Integer Integer Boolean) Integer))
 (define (build-complex-meter numbers bits compare)
-  (for/fold ([remaining numbers]
+  (for/fold ([remaining : (Listof Integer) numbers]
              #:result (first remaining))
             ([bit (reverse (range 0 bits))])
     (define bit-value (select-bit-value remaining bit compare))
-    (filter (lambda (num) (= bit-value (bit-at num bit))) remaining)))
+    (filter (lambda ((num : Integer)) (= bit-value (bit-at num bit))) remaining)))
 
+(: solve-a (-> (Listof String) Integer))
 (define (solve-a lines)
   (define bits (string-length (first lines)))
-  (define numbers (map (λ (s) (string->number s 2)) lines))
+  (define numbers (map (λ ((s : String)) (string->int! s 2)) lines))
 
   (* (build-simple-meter numbers bits <)
      (build-simple-meter numbers bits >)))
 
+(: solve-b (-> (Listof String) Integer))
 (define (solve-b lines)
   (define bits (string-length (first lines)))
-  (define numbers (map (λ (s) (string->number s 2)) lines))
+  (define numbers (map (λ ((s : String)) (string->int! s 2)) lines))
 
   (* (build-complex-meter numbers bits <)
      (build-complex-meter numbers bits >)))
