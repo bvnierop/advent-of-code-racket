@@ -6,7 +6,7 @@
   "Predicate that tests that a list contains only strings"
   (andmap string? l))
 
-(: string->int! (-> String Integer Integer))
+(: string->int! (->* (String) (Integer) Integer))
 (define (string->int! str (base 10))
   "Forces conversion from a string to an integer."
   (match (string->number str base)
