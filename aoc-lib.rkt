@@ -59,3 +59,38 @@
   (cast (read port) type))
 
 (provide read!)
+
+;; Bitwise operators
+(define (bw:<< (number : Integer) (n : Integer)) (arithmetic-shift number n))
+(define (bw:>> (number : Integer) (n : Integer)) (arithmetic-shift number (- n)))
+(define (bw:and (a : Integer) (b : Integer)) (bitwise-and a b))
+(define (bw:or (a : Integer) (b : Integer)) (bitwise-ior a b))
+
+(define (bit-at (number : Integer) (bit : Integer))
+  (bw:>> (bw:and (bw:<< 1 bit) number)
+         bit))
+
+(provide bw:<<)
+(provide bw:>>)
+(provide bw:and)
+(provide bw:or)
+(provide bit-at)
+
+;; Count frequencies of elements in a list
+;; (: frequencies (All (A) (-> (Listof A) (Listof (Pairof A Integer)))))
+
+;; (define (frequencies lst)
+;;   (map
+;;    (λ (grp) (cons (first grp) (length grp)))
+;;    (group-by identity lst)))
+;;   ;; (hash->list
+;;   ;;  (foldl
+;;   ;;  (lambda (elem freqs) (hash-update freqs elem
+;;   ;;                                    (lambda (val) (+ val 1))
+;;   ;;                                    (lambda () 0)))
+;;   ;;  (hash)
+;;   ;;  lst)))
+
+;; ;; Sort the frequencies, tiebreak on the element itself
+;; (define (sort-frequencies frequencies less-than? (key-less-than? less-than?))
+;;   (sort (sort frequencies key-less-than? #:key car) less-than? #:key cdr))
