@@ -7,7 +7,7 @@
 (define (select-bit-value numbers bit compare)
   (~> (map (λ ((num : Integer)) (bit-at num bit)) numbers)
       (frequencies)
-      (sort-frequencies compare compare)
+      (sort-frequencies compare)
       (first)
       (car)))
 

@@ -85,11 +85,11 @@
 
 (: sort-frequencies
    (All (A)
-        (-> (Listof (Pairof A Integer))
-            (-> Integer Integer Boolean)
-            (-> A A Boolean)
-            (Listof (Pairof A Integer)))))
-(define (sort-frequencies frequencies less-than? key-less-than?)
+        (->* ([Listof (Pairof A Integer)]
+              [-> Integer Integer Boolean])
+             ([-> A A Boolean])
+             (Listof (Pairof A Integer)))))
+(define (sort-frequencies frequencies less-than? (key-less-than? less-than?))
   (define key-sort (inst sort (Pairof A Integer) A))
   (define frequency-sort (inst sort (Pairof A Integer) Integer))
   (frequency-sort 
