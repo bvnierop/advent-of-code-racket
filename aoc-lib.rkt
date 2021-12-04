@@ -34,7 +34,7 @@
       lst
       (drop-up-to (- n 1) (cdr lst))))
 
-(: chunk-every (All (A) (-> Integer (Listof A) Integer (Listof (Listof A)))))
+(: chunk-every (All (A) (->* [Integer (Listof A)] [Integer] (Listof (Listof A)))))
 (define (chunk-every cnt lst (step cnt))
   (define (cleanup (lst : (Listof (Listof A)))) : (Listof (Listof A))
     (cond
@@ -99,3 +99,8 @@
 
 (provide frequencies)
 (provide sort-frequencies)
+
+;; String helpers
+(define (string-empty? str)
+  (not (non-empty-string? str)))
+(provide string-empty?)
