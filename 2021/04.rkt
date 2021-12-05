@@ -1,4 +1,3 @@
-;; #lang racket
 #lang typed/racket
 
 (require advent-of-code/aoc-lib)
