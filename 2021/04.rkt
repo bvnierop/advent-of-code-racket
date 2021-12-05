@@ -35,9 +35,7 @@
   (for/fold ([bingo : Boolean #t])
             ([col (range 0 len)]
              #:break (false? bingo))
-    (if (set-member? drawn (array-ref chart (vector row col)))
-        bingo
-        #f)))
+    (set-member? drawn (array-ref chart (vector row col)))))
 
 (: bingo-col? (-> BingoCard Integer (Setof Integer) Boolean))
 (define (bingo-col? chart col drawn)
@@ -45,9 +43,7 @@
   (for/fold ([bingo : Boolean #t])
             ([row (range 0 len)]
              #:break (false? bingo))
-    (if (set-member? drawn (array-ref chart (vector row col)))
-        bingo
-        #f)))
+    (set-member? drawn (array-ref chart (vector row col)))))
 
 (: bingo? (-> BingoCard (Setof Integer) Boolean))
 (define (bingo? chart drawn)
@@ -56,10 +52,7 @@
             ([i (range 0 len)])
     (define row? (bingo-row? chart i drawn))
     (define col? (bingo-col? chart i drawn))
-
-    (if (or row? col?)
-        #t
-        bingo)))
+    (or row? col? bingo)))
 
 (: bingo-score (-> BingoCard (Setof Integer) Integer Integer))
 (define (bingo-score chart drawn most-recently-drawn)
@@ -112,4 +105,3 @@
 
 (provide solve-a)
 (provide solve-b)
-
