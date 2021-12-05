@@ -59,8 +59,7 @@
                  ([_ (in-range 0 +inf.0)] ;; infinite range
                   #:break (and (= x (+ x2 stepx)) (= y (+ y2 stepy))))
          (values (+ x stepx) (+ y stepy)
-                 (cons (point x y) points))
-         ))]))
+                 (cons (point x y) points))))]))
 (check-equal? (line-segment->points (line-segment (point 0 0) (point 2 0)))
               (list (point 0 0) (point 1 0) (point 2 0)))
 (check-equal? (line-segment->points (line-segment (point 0 0) (point 0 2)))
@@ -68,29 +67,26 @@
 (check-equal? (line-segment->points (line-segment (point 0 0) (point 2 2)))
               (list (point 0 0) (point 1 1) (point 2 2)))
 
-(: solve-a (-> (Listof String) Integer))
-(define (solve-a lines)
+(: solve (-> (Listof String) (-> line-segment Boolean) Integer))
+(define (solve lines filter-fn)
   (~> lines
       (map input-line->line-segment _)
-      (filter (λ ((segment : line-segment))
-                (or (line-segment-vertical? segment)
-                    (line-segment-horizontal? segment))) _)
-      (map line-segment->points _)
-      (flatten _)
-      (frequencies)
-      (filter (λ ((freq : (Pairof Any Integer))) (match freq [(cons pt cnt) (< 1 cnt)])) _)
-      (length)
-  ))
-
-(: solve-b (-> (Listof String) Integer))
-(define (solve-b lines)
-  (~> lines
-      (map input-line->line-segment _)
+      (filter filter-fn _)
       (map line-segment->points _)
       (flatten _)
       (frequencies)
       (filter (λ ((freq : (Pairof Any Integer))) (match freq [(cons pt cnt) (< 1 cnt)])) _)
       (length)))
+  
+(: solve-a (-> (Listof String) Integer))
+(define (solve-a lines)
+  (solve lines (λ ((segment : line-segment))
+                 (or (line-segment-vertical? segment)
+                     (line-segment-horizontal? segment)))))
+
+(: solve-b (-> (Listof String) Integer))
+(define (solve-b lines)
+  (solve lines (λ (_) #t)))
 
 (provide solve-a)
 (provide solve-b)
