@@ -31,7 +31,7 @@
 ;; BINGO
 (: bingo-row? (-> BingoCard Integer (Setof Integer) Boolean))
 (define (bingo-row? chart row drawn)
-  (define len (sqrt (array-size chart)))
+  (define len (vector-ref (array-shape chart) 0))
   (for/fold ([bingo : Boolean #t])
             ([col (range 0 len)]
              #:break (false? bingo))
@@ -39,7 +39,7 @@
 
 (: bingo-col? (-> BingoCard Integer (Setof Integer) Boolean))
 (define (bingo-col? chart col drawn)
-  (define len (sqrt (array-size chart)))
+  (define len (vector-ref (array-shape chart) 0))
   (for/fold ([bingo : Boolean #t])
             ([row (range 0 len)]
              #:break (false? bingo))
@@ -47,7 +47,7 @@
 
 (: bingo? (-> BingoCard (Setof Integer) Boolean))
 (define (bingo? chart drawn)
-  (define len (sqrt (array-size chart)))
+  (define len (vector-ref (array-shape chart) 0))
   (for/fold ([bingo : Boolean #f])
             ([i (range 0 len)])
     (define row? (bingo-row? chart i drawn))

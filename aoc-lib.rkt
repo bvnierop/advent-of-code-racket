@@ -83,6 +83,20 @@
    (λ ((grp : (Listof A))) (cons (first grp) (length grp)))
    (group-by (λ (x) x) lst)))
 
+(: fast-frequencies (All (A) (-> (Listof A) (Listof (Pairof A Integer)))))
+(define (fast-frequencies lst)
+  (define mkhash (inst hash A Integer))
+  (define mklist (inst hash->list A Integer))
+  (mklist
+   (foldl
+    (lambda ((elem : A) (freqs : (Immutable-HashTable A Integer)))
+      (hash-update freqs elem
+                   (lambda ((val : Integer)) (+ val 1))
+                   (lambda () 0)))
+    (mkhash)
+    lst)))
+(provide fast-frequencies)
+
 (: sort-frequencies
    (All (A)
         (->* ([Listof (Pairof A Integer)]

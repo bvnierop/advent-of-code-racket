@@ -74,7 +74,7 @@
       (filter filter-fn _)
       (map line-segment->points _)
       (flatten _)
-      (frequencies)
+      (fast-frequencies)
       (filter (λ ((freq : (Pairof Any Integer))) (match freq [(cons pt cnt) (< 1 cnt)])) _)
       (length)))
   
