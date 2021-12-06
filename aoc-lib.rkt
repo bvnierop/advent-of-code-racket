@@ -2,6 +2,8 @@
 
 (module+ aoc-lib)
 
+(require math/array)
+
 ;; Helper to provide and define a method in one call
 (define-syntax-rule (define/provide (id args ...) body ...)
   (begin
@@ -118,3 +120,7 @@
 (define/provide (vector-inc! vec pos (n 1))
   (vector-set! vec pos (+ (vector-ref vec pos) n)))
 
+;; Array helpers
+(: array->set (All (A) (-> (Array A) (Setof A))))
+(define/provide (array->set arr)
+  (for/set : (Setof A) ([elem : A (in-array arr)]) elem))

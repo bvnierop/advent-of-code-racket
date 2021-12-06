@@ -54,14 +54,12 @@
     (define col? (bingo-col? chart i drawn))
     (or row? col? bingo)))
 
+
 (: bingo-score (-> BingoCard (Setof Integer) Integer Integer))
 (define (bingo-score chart drawn most-recently-drawn)
-  (~> chart
-      (array->list) 
-      (list->set)
+  (~> (array->set chart)
       (set-subtract _ drawn)
-      (set->list)
-      (foldl + 0 _)
+      (sequence-fold + 0 _)
       (* most-recently-drawn _)))
 
 (: solve-a (-> (Listof String) Integer))
