@@ -7,7 +7,8 @@
 (define (parse lines)
   (map string->int! (string-split (first lines) ",")))
 
-(define (solve-for (positions : (Listof Integer)) (real-cost-fn : (-> Integer Integer)))
+(: solve-for (-> (Listof Integer) (-> Integer Integer) Integer))
+(define (solve-for positions real-cost-fn)
   (define start (first (sort positions <)))
   (define end (first (sort positions >)))
   (for/fold ([fuel : Integer (foldl + 0 (map real-cost-fn positions))])
@@ -23,8 +24,8 @@
 
 (: solve-b (-> (Listof String) Integer))
 (define (solve-b lines)
-  (solve-for (parse lines)
-             (λ ((n : Integer)) (exact-round (/ (* n (+ n 1)) 2)))))
+  (define (sum-of-1-to-n (n : Integer)) (exact-round (/ (* n (+ n 1)) 2)))
+  (solve-for (parse lines) sum-of-1-to-n))
 
 (provide solve-a)
 (provide solve-b)
