@@ -112,6 +112,13 @@
 (define/provide (string-empty? str)
   (not (non-empty-string? str)))
 
+(: string-not-empty? (-> String Boolean))
+(define/provide (string-not-empty? str) (not (string-empty? str)))
+
+(: string-reverse (-> String String))
+(define/provide (string-reverse str)
+  (list->string (reverse (string->list str))))
+
 ;; Vector helpers
 (: vector-inc! (case->
                 (->* ((Mutable-Vectorof Integer) Integer) (Integer) Void)
@@ -124,3 +131,22 @@
 (: array->set (All (A) (-> (Array A) (Setof A))))
 (define/provide (array->set arr)
   (for/set : (Setof A) ([elem : A (in-array arr)]) elem))
+
+
+;; Stack library
+(define-type (Stack A) (Listof A))
+
+(: stack (All (A) (-> (Stack A))))
+(define/provide (stack) '())
+
+(: stack-head (All (A) (-> (Stack A) A)))
+(define/provide (stack-head stck) (car stck))
+
+(: stack-tail (All (A) (-> (Stack A) (Stack A))))
+(define/provide (stack-tail stck) (cdr stck))
+
+(: stack-add (All (A) (-> A (Stack A) (Stack A))))
+(define/provide (stack-add item stck) (cons item stck))
+
+(: stack-empty? (All (A) (-> (Stack A) Boolean)))
+(define/provide (stack-empty? stck) (null? stck))
