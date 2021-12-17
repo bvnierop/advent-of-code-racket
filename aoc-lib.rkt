@@ -119,6 +119,15 @@
 (define/provide (string-reverse str)
   (list->string (reverse (string->list str))))
 
+(: string-upcase? (-> String Boolean))
+(define/provide (string-upcase? str)
+  (string=? str (string-upcase str)))
+
+(: string-downcase? (-> String Boolean))
+(define/provide (string-downcase? str)
+  (string=? str (string-downcase str)))
+
+
 ;; Vector helpers
 (: vector-inc! (case->
                 (->* ((Mutable-Vectorof Integer) Integer) (Integer) Void)
