@@ -1,10 +1,8 @@
-;; #lang racket
 #lang typed/racket
 
 (require advent-of-code/aoc-lib)
 (require threading)
 (require math/array)
-;; (require data/heap)
 (require (prefix-in heap: pfds/heap/binomial))
 
 (define-type Graph (Array Integer))
@@ -63,59 +61,51 @@
 
 (struct point ((x : Integer) (y : Integer)) #:transparent)
 
+(define-type PQ (heap:Heap node))
+(define-type Distances (HashTable point Integer))
+
+(: neighbours (-> Graph node Integer (Listof node)))
+(define (neighbours graph node blocks)
+  (for/list ([dx '(0 0 1 -1)]
+             [dy '(1 -1 0 0)])
+    (point->node graph
+                 (+ (node-x node) dx)
+                 (+ (node-y node) dy)
+                 blocks
+                 (node-cost node))))
+
 (: dijkstra (-> Graph Integer (U False Integer)))
 (define (dijkstra graph blocks)
-  (define width (get-width graph))
-  (define height (get-height graph))
-  (define dst (point (- (* width blocks) 1) (- (* height blocks) 1)))
+  (define total-width (* (get-width graph) blocks))
+  (define total-height (* (get-height graph) blocks))
+  (define dst (point (- total-width 1) (- total-height 1)))
 
-  (define total-width (* width blocks))
-  (define total-height (* height blocks))
-  ;; add to pq
-  (let ([pq : (heap:Heap node) (heap:heap node-<=?)]
-        [dist (array->mutable-array (make-array (vector total-height total-width)
-                                                (* total-height total-width 10)))]
-        [risk : (U False Integer) #f])
+  (define inf (* total-height total-width 10))
 
-    (: heap-add! (-> (heap:Heap node) node Void))
-    (define (heap-add! h a)
-      (set! pq (heap:insert a h)))
-
-    (: heap-remove-min! (-> (heap:Heap node) Void))
-    (define (heap-remove-min! h)
-      (set! pq (heap:delete-min/max h)))
-
-    (heap-add! pq (node 0 0 0))
-
-  ;; while (! pq empty)
-    (: loop (-> (U False Integer)))
-    (define (loop)
-      (if (or (heap:empty? pq) risk)
-          risk
-          ;;    grab cur
-          (let ([cur (heap:find-min/max pq)])
-            ;; (print "~a\n" cur)
-            (heap-remove-min! pq)
-            ;;    if cur == dst -> end
-            (if (and (= (node-x cur) (point-x dst))
-                     (= (node-y cur) (point-y dst)))
-                (set! risk (node-cost cur))
-                ;;    for each neighbour
-                (for ([dx '(0 0 1 -1)]
-                      [dy '(-1 1 0 0)])
-                  (let ([x (+ (node-x cur) dx)]
-                        [y (+ (node-y cur) dy)])
-                    ;;      if inbound
-                    (unless (out-of-bounds? graph x y blocks)
-                      (let ([next (point->node graph x y blocks (node-cost cur))])
-                        ;;      if closer than known dist
-                        (when (< (node-cost next) (array-ref dist (vector y x))) ;; better route
-                          ;;        update dist
-                          (array-set! dist (vector y x) (node-cost next))
-                          ;;        add to pq
-                          (heap-add! pq next)))))))
-            (loop))))
-    (loop)))
+  (: loop (-> PQ Distances (U False Integer) (U False Integer)))
+  (define (loop pq dist risk)
+    (if (or (heap:empty? pq) risk)
+        risk
+        (let ([cur (heap:find-min/max pq)])
+          (if (and (= (node-x cur) (point-x dst))
+                   (= (node-y cur) (point-y dst)))
+              (loop pq dist (node-cost cur))
+              (let-values ([(new-queue new-dist)
+                            (for/fold ([q : PQ (heap:delete-min/max pq)]
+                                       [d : Distances dist])
+                                      ([next (neighbours graph cur blocks)])
+                                 (match next
+                                   [(node x y cost)
+                                    (if (or (out-of-bounds? graph x y blocks)
+                                            (not (< cost (hash-ref d (point x y) (λ () inf)))))
+                                        (values q d)
+                                        (values
+                                         (heap:insert (node x y cost) q)
+                                         (hash-update d (point x y)
+                                                      (λ (p) cost)
+                                                      (λ () inf))))]))])
+                (loop new-queue new-dist risk))))))
+  (loop (heap:heap node-<=? (node 0 0 0)) (hash) #f))
 
 (: solve-a (-> (Listof String) (U False Integer)))
 (define (solve-a lines)
