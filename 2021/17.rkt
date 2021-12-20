@@ -1,29 +1,32 @@
-#lang racket
-;;#lang typed/racket
+#lang typed/racket
 
 (require advent-of-code/aoc-lib)
 
-(struct point (x y) #:transparent)
-(struct rect (top-left bottom-right) #:transparent)
+(struct point ((x : Integer) (y : Integer)) #:transparent)
+(struct rect ((top-left : point) (bottom-right : point)) #:transparent)
 
+(: numbers->rect (-> (Listof String) rect))
 (define (numbers->rect lst)
   (match (map string->int! lst)
     [(list x1 x2 y1 y2) (rect (point x1 y1) (point x2 y2))]))
 
+(: parse (-> (Listof String) rect))
 (define (parse lines)
   (match (regexp-match! #px"target area: x=(-?\\d+)..(-?\\d+), y=(-?\\d+)..(-?\\d+)" (first lines))
     [(list _ x1 x2 y1 y2) (numbers->rect (list x1 x2 y1 y2))]))
 
-;;(: solve-a (-> (Listof String) Integer))
+(: solve-a (-> (Listof String) Integer))
 (define (solve-a lines)
   (match (parse lines)
     [(rect (point _ y1) (point _ y2))
      (let ([y (abs (min y1 y2))])
-       (/ (* y (- y 1)) 2))]))
-       
+       (exact-floor (/ (* y (- y 1)) 2)))]))
+
+(: triangular (-> Integer Integer))
 (define (triangular n)
   (exact-floor (/ (* n (+ n 1)) 2)))
 
+(: calc-y (-> Integer Integer Integer))
 (define (calc-y y-velo step)
   (if (<= 0 y-velo)
       (let ([up (- (triangular (max 0 y-velo))
@@ -34,7 +37,7 @@
             (triangular (- (abs y-velo) 1))))))
 
 (module+ test
-  (require rackunit)
+  (require typed/rackunit)
   (check-equal? (calc-y 2 0) 0)
   (check-equal? (calc-y 2 1) 2)
   (check-equal? (calc-y 2 2) 3)
@@ -57,6 +60,7 @@
   (check-equal? (calc-y -2 2) -5)
   )
 
+(: calc-x (-> Integer Integer Integer))
 (define (calc-x x-velo step)
   (- (triangular x-velo) (triangular (max 0 (- x-velo step)))))
 (module+ test
@@ -68,12 +72,13 @@
   (check-equal? (calc-x 3 5) 6)
   )
 
+(: valid? (-> point rect Boolean))
 (define (valid? velo target)
   (match (cons velo target)
     [(cons (point vx vy) (rect (point x1 y1) (point x2 y2)))
-        (for/fold ([x 0]
-                   [y 0]
-                   [valid #f]
+        (for/fold ([x : Integer 0]
+                   [y : Integer 0]
+                   [valid : Boolean #f]
                    #:result valid)
                   ([step (in-range 0 +inf.0)]
                    #:break (or (< (max x1 x2) x) (< y (min y1 y2)) valid))
@@ -86,7 +91,7 @@
                 (values new-x new-y #t)
                 (values new-x new-y valid))))]))
 
-;;(: solve-b (-> (Listof String) Integer))
+(: solve-b (-> (Listof String) Integer))
 (define (solve-b lines)
   (define r (parse lines))
   (match r
@@ -94,10 +99,10 @@
      (let* ([max-x (max x1 x2)]
             [max-y (max (abs y1) (abs y2))]
             [min-y (- max-y)])
-       (count (λ (p) (valid? p r))
-               (for*/list ([x (in-range 0 (+ max-x 1))]
-                           [y (in-range min-y (+ max-y 1))])
-                 (point x y))))]))
+       (count (λ ((p : point)) (valid? p r))
+              (for*/list : (Listof point) ([x (in-range 0 (+ max-x 1))]
+                                           [y (in-range min-y (+ max-y 1))])
+                (point x y))))]))
 
 (provide solve-a)
 (provide solve-b)
